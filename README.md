@@ -1,3 +1,5 @@
+## A React application that lets you add or delete a task and it will get displayed as a list
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
