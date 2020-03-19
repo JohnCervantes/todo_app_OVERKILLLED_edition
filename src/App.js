@@ -1,73 +1,19 @@
-import React, { Component } from "react";
-import Todo from "./components/todo";
+import React from "react";
 import "./App.css";
+import TodoOverkilled from "./containers/TodoOverkilled";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
 
-
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.inputElement = React.createRef();
-    this.state = {
-      items: []
-    };
-  }
-
-  deleteItem = index => {
-    const items = [...this.state.items];
-    items.splice(index, 1);
-    this.setState({ items: items });
-  };
-
-  addItem(e) {
-    e.preventDefault();
-    if (this.inputElement.current.value !== "") {
-      var newItem = {
-        text: this.inputElement.current.value,
-        key: Date.now()
-      };
-
-      this.setState(prevState => {
-        return {
-          items: prevState.items.concat(newItem)
-        };
-      });
-
-      this.inputElement.current.value = "";
-      this.inputElement.current.focus();
-    }
-
-    console.log(this.state.items);
-  }
-
-  render() {
-    const todo = (
-      <div>
-        {this.state.items.map((todo, index) => {
-          return (
-            <Todo
-              key={index}
-              text={todo.text}
-              delete={this.deleteItem.bind(this, index)}
-            ></Todo>
-          );
-        })}
+function App() {
+  return (
+    <div className="App Site">
+      <div className="Site-content">
+        <Header></Header>
+        <TodoOverkilled></TodoOverkilled>
       </div>
-    );
-
-    return (
-      <div className="App">
-        <h1>Todo({this.state.items.length})</h1>
-        <form onSubmit={this.addItem.bind(this)}>
-          <input placeholder="Enter todo here" type="text" ref={this.inputElement} />
-          <button type="submit">Add</button>
-        </form>
-
-        {todo}
-        {/* <TodoItems entries={this.state.items} /> */}
-      </div>
-    );
-  }
+      <Footer></Footer>
+    </div>
+  );
 }
 
 export default App;
