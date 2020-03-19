@@ -1,4 +1,11 @@
-## A React application that lets you add or delete a task and it will get displayed as a list
+# Todo_app_OVERKILLED_Edition
+
+ A Todo list application built using React, Node.js, Redux, Material-UI and Firebase.
+ Demo: 
+ 
+ 
+ 
+ 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
