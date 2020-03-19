@@ -1,15 +1,14 @@
 import React, { Component } from "react";
-import Todo from "../components/Todo";
-
-
-
+import TodoCard from "./TodoCard";
+import axios from "../axios-todos";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.inputElement = React.createRef();
     this.state = {
-      items: []
+      todos: [],
+      dataReceived: false
     };
   }
 
@@ -22,48 +21,72 @@ class App extends Component {
   addItem(e) {
     e.preventDefault();
     if (this.inputElement.current.value !== "") {
-      var newItem = {
-        text: this.inputElement.current.value,
-        key: Date.now()
-      };
+      const fetchedData = [...this.state.todos];
+      axios
+        .post("/todos.json", { text: this.inputElement.current.value })
+        .then(res => {
+          for (let key in res.data) {
+            fetchedData.push({
+              text: this.inputElement.current.value,
+              key: key
+            });
+          }
+          this.setState({ todos: fetchedData });
 
-      this.setState(prevState => {
-        return {
-          items: prevState.items.concat(newItem)
-        };
-      });
-
-      this.inputElement.current.value = "";
-      this.inputElement.current.focus();
+          this.inputElement.current.value = "";
+          this.inputElement.current.focus();
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
+  }
 
-    console.log(this.state.items);
+  componentDidMount() {
+    const fetchedData = [];
+    axios
+      .get("/todos.json")
+      .then(res => {
+        for (let key in res.data) {
+          fetchedData.push({ ...res.data[key], key: key });
+        }
+        this.setState({ todos: fetchedData, dataReceived: true });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
-    const todo = (
+    let todos = this.state.dataReceived ? (
       <div>
-        {this.state.items.map((todo, index) => {
+        {this.state.todos.map((todo, index) => {
           return (
-            <Todo
-              key={index}
-              text={todo.text}
+            <TodoCard
+              key={todo.key}
+              data={todo}
               delete={this.deleteItem.bind(this, index)}
-            ></Todo>
+            ></TodoCard>
           );
         })}
       </div>
+    ) : (
+      undefined
     );
 
     return (
       <div className="App">
-        <h1>Todo({this.state.items.length})</h1>
+        <h1>Todo()</h1>
         <form onSubmit={this.addItem.bind(this)}>
-          <input placeholder="Enter todo here" type="text" ref={this.inputElement} />
+          <input
+            placeholder="Enter the title of your todo list here"
+            type="text"
+            ref={this.inputElement}
+          />
           <button type="submit">Add</button>
         </form>
 
-        {todo}
+        {todos}
         {/* <TodoItems entries={this.state.items} /> */}
       </div>
     );
