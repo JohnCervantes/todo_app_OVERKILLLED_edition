@@ -9,7 +9,7 @@ const header = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="title" color="inherit">
-            Bad Seal Studios - Todo Application OVERKILL edition
+            Bad Seal Studios - Todo application overkill edition
           </Typography>
         </Toolbar>
       </AppBar>

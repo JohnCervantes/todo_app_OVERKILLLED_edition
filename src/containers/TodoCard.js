@@ -8,6 +8,8 @@ import Todo from "../components/Todo";
 import axios from "../axios-todos";
 import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
+import TextField from "@material-ui/core/TextField";
 
 class TodoCard extends Component {
   constructor(props) {
@@ -15,8 +17,7 @@ class TodoCard extends Component {
     this.inputElement = React.createRef();
     this.state = {
       todos: { ...this.props.data },
-      editing: false,
-      saving: false
+      editing: false
     };
   }
 
@@ -51,8 +52,6 @@ class TodoCard extends Component {
     this.setState({ editing: !this.state.editing });
   };
 
-  savingTodo = () => {};
-
   editTodo = (input, index) => {
     console.log(input);
     console.log(index);
@@ -62,10 +61,10 @@ class TodoCard extends Component {
       currentTodos[index] = input;
       const updatedData = { ...currentData, text: currentTodos };
 
-      // https://todo-c7ab8.firebaseio.com/todos/-M2t5zpXNrCKhCzlsVfW/text/1
       axios
         .put(`todos/${updatedData.key}.json`, {
-          text: updatedData.text
+          text: updatedData.text,
+          title: updatedData.title
         })
         .then(res => {
           this.setState({ todos: updatedData });
@@ -128,69 +127,84 @@ class TodoCard extends Component {
         style={{
           width: "30%",
           display: "inline-block",
-          margin: "30px"
+          margin: "30px",
+          height: "600px"
         }}
       >
-        <CardContent>
-          <Typography color="primary" gutterBottom variant="h4" component="h2">
+        <CardContent
+          style={{
+            height: "100px",
+            backgroundColor: "#028482"
+          }}
+        >
+          <Typography
+            style={{ color: "white", lineHeight: "90px" }}
+            color="primary"
+            gutterBottom
+            variant="h4"
+            component="h2"
+            align="center"
+          >
             {this.props.data.title}
             <hr></hr>
           </Typography>
+        </CardContent>
+        <CardContent style={{ maxHeight: "500px", overflow: "auto" }}>
           <Typography color="textSecondary" variant="h6" component="h2">
             {this.state.editing ? (
               <ul style={{ margin: "auto", padding: "0" }}>{todos}</ul>
             ) : (
               <form onSubmit={this.addTodo.bind(this)}>
-                <input
-                  placeholder="Add todo here"
+                <TextField
+                  required
+                  variant="outlined"
+                  label="Enter a task"
                   type="text"
-                  ref={this.inputElement}
-                />
-                <button type="submit">Add</button>
+                  size="small"
+                  inputRef={this.inputElement}
+                />{" "}
+                <Button
+                  type="submit"
+                  size="small"
+                  variant="outlined"
+                  startIcon={<AddCircleOutline />}
+                >
+                  Add a task
+                </Button>
                 <br></br>
                 <br></br>
                 <ul style={{ margin: "auto", padding: "0" }}>{todos}</ul>
               </form>
             )}
           </Typography>
-        </CardContent>
-        <CardActions>
-          <Grid container justify="center" alignItems="center" direction="row">
-            <Grid item>
-              {this.state.editing ? (
-                undefined
-              ) : (
-                <Button
-                  onClick={this.props.delete}
-                  size="small"
-                  variant="outlined"
-                  color="secondary"
-                  startIcon={<DeleteIcon />}
-                >
-                  Delete All todos
-                </Button>
-              )}
+          <CardActions>
+            <Grid
+              container
+              justify="center"
+              alignItems="center"
+              direction="row"
+            >
+              <Grid item>
+                {this.state.editing ? (
+                  undefined
+                ) : (
+                  <Button
+                    onClick={this.props.delete}
+                    size="small"
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete All todos
+                  </Button>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
-        </CardActions>
+          </CardActions>
+        </CardContent>
       </Card>
     );
   }
 }
 
 export default TodoCard;
-
-//   componentDidMount() {
-//     const fetchedData = [];
-//     axios
-//       .get("/todos.json")
-//       .then(res => {
-//         for (let key in res.data) {
-//           fetchedData.push({ ...res.data[key], key: key });
-//         }
-//         this.setState({ todos: fetchedData, dataReceived: true });
-//       })
-//       .catch(err => {
-//         console.log(err);
-//       });
-//   }

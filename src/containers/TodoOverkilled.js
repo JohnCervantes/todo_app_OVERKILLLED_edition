@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import TodoCard from "./TodoCard";
 import axios from "../axios-todos";
+import TextField from "@material-ui/core/TextField";
+import Send from "@material-ui/icons/Send";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 
 class App extends Component {
   constructor(props) {
@@ -34,6 +38,7 @@ class App extends Component {
         title: this.inputElement.current.value,
         text: { text0: 0 }
       };
+      console.log(newTodoBatch);
       const updatedData = [...this.state.todos];
 
       axios
@@ -87,18 +92,29 @@ class App extends Component {
 
     return (
       <div className="App">
-        <h1>Todo()</h1>
+        <Typography
+          style={{ margin: "10px" }}
+          color="primary"
+          gutterBottom
+          variant="h4"
+          component="h2"
+        >
+          Todo Lists({this.state.todos.length})
+        </Typography>
+
         <form onSubmit={this.addItem.bind(this)}>
-          <input
-            placeholder="Enter the title of your todo list here"
+          <TextField
+            required
+            label="Enter a name of a todo list"
             type="text"
-            ref={this.inputElement}
-          />
-          <button type="submit">Add</button>
+            inputRef={this.inputElement}
+          />{" "}
+          <Button type="submit" variant="outlined" endIcon={<Send></Send>}>
+            Add
+          </Button>
         </form>
 
         {todos}
-        {/* <TodoItems entries={this.state.items} /> */}
       </div>
     );
   }
