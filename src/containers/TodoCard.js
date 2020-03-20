@@ -6,18 +6,23 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Todo from "../components/Todo";
 import axios from "../axios-todos";
+import Grid from "@material-ui/core/Grid";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 class TodoCard extends Component {
   constructor(props) {
     super(props);
     this.inputElement = React.createRef();
     this.state = {
-      todos: { ...this.props.data }
+      todos: { ...this.props.data },
+      editing: false,
+      saving: false
     };
   }
 
   addTodo(e) {
     e.preventDefault();
+    console.log("lolz");
     if (this.inputElement.current.value !== "") {
       const currentData = this.state.todos;
       const currentTodos = currentData.text;
@@ -41,6 +46,39 @@ class TodoCard extends Component {
         });
     }
   }
+
+  editingState = () => {
+    this.setState({ editing: !this.state.editing });
+  };
+
+  savingTodo = () => {};
+
+  editTodo = (input, index) => {
+    console.log(input);
+    console.log(index);
+    if (input !== "") {
+      const currentData = this.state.todos;
+      const currentTodos = currentData.text;
+      currentTodos[index] = input;
+      const updatedData = { ...currentData, text: currentTodos };
+
+      // https://todo-c7ab8.firebaseio.com/todos/-M2t5zpXNrCKhCzlsVfW/text/1
+      axios
+        .put(`todos/${updatedData.key}.json`, {
+          text: updatedData.text
+        })
+        .then(res => {
+          this.setState({ todos: updatedData });
+
+          this.inputElement.current.value = "";
+          this.inputElement.current.focus();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+    this.editingState();
+  };
 
   deleteTodo = (key, index) => {
     console.log(index);
@@ -76,52 +114,64 @@ class TodoCard extends Component {
             <Todo
               text={this.state.todos.text[todo]}
               delete={this.deleteTodo.bind(this, key, todo)}
+              edit={input => this.editTodo(input, todo)}
+              changeEditState={this.editingState}
+              editing={this.state.editing}
             ></Todo>
           </div>
         );
       }
     });
 
-    // this.state.todos.text.length > 1 ? (
-    //   <div>
-    //     {this.state.todos.text.slice(1).map(todo => {
-    //       if (todo !== null) {
-    //         return (
-    //           <Todo
-    //             text={todo.text}
-    //             delete={this.deleteTodo.bind(this, key, todo.counter)}
-    //             disabled={this.state.deleteReceived}
-    //           ></Todo>
-    //         );
-    //       }
-    //     })}
-    //   </div>
-    // ) : (
-    //   <p>You don't have any todos</p>
-    // );
-
     return (
-      <Card style={{ width: "20%", display: "inline-block", margin: "30px" }}>
+      <Card
+        style={{
+          width: "30%",
+          display: "inline-block",
+          margin: "30px"
+        }}
+      >
         <CardContent>
-          <Typography color="textSecondary" gutterBottom>
+          <Typography color="primary" gutterBottom variant="h4" component="h2">
             {this.props.data.title}
+            <hr></hr>
           </Typography>
-          <Typography variant="h5" component="h2">
-            <ul>{todos}</ul>
-            <form onSubmit={this.addTodo.bind(this)}>
-              <input
-                placeholder="Add todo here"
-                type="text"
-                ref={this.inputElement}
-              />
-              <button type="submit">Add</button>
-            </form>
+          <Typography color="textSecondary" variant="h6" component="h2">
+            {this.state.editing ? (
+              <ul style={{ margin: "auto", padding: "0" }}>{todos}</ul>
+            ) : (
+              <form onSubmit={this.addTodo.bind(this)}>
+                <input
+                  placeholder="Add todo here"
+                  type="text"
+                  ref={this.inputElement}
+                />
+                <button type="submit">Add</button>
+                <br></br>
+                <br></br>
+                <ul style={{ margin: "auto", padding: "0" }}>{todos}</ul>
+              </form>
+            )}
           </Typography>
         </CardContent>
         <CardActions>
-          <Button onClick={this.props.delete} size="small">
-            Delete
-          </Button>
+          <Grid container justify="center" alignItems="center" direction="row">
+            <Grid item>
+              {this.state.editing ? (
+                undefined
+              ) : (
+                <Button
+                  onClick={this.props.delete}
+                  size="small"
+                  variant="outlined"
+                  color="secondary"
+                  startIcon={<DeleteIcon />}
+                >
+                  Delete All todos
+                </Button>
+              )}
+            </Grid>
+          </Grid>
         </CardActions>
       </Card>
     );

@@ -1,0 +1,7 @@
+.ListStyle {
+  list-style-type: none;
+  border-bottom: 1px solid black;
+  padding: 5px;
+  margin: 0;
+}
+
