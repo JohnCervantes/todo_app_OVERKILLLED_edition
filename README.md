@@ -1,8 +1,9 @@
-# Todo_app_OVERKILLED_Edition
+# Todo_app_overkill_Edition
 
- A Todo list application built using React, Node.js, Redux, Material-UI and Firebase.
- 
- Demo: 
+  A Todo list application built using React, Node.js, Redux, Material-UI and Firebase that allows the user to add, delete and update todo task.
+
+ Project is live: https://johncervantes.github.io/todo_app_overkill_edition/
+ Demo: https://www.youtube.com/watch?v=Xa_QRKk-pjo&feature=youtu.be
  
  
  
