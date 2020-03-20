@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/todo_app_overkill_edition/static/css/main.85800983.chunk.css",
+    "main.js": "/todo_app_overkill_edition/static/js/main.e04e124c.chunk.js",
+    "main.js.map": "/todo_app_overkill_edition/static/js/main.e04e124c.chunk.js.map",
+    "runtime-main.js": "/todo_app_overkill_edition/static/js/runtime-main.e5c7ea74.js",
+    "runtime-main.js.map": "/todo_app_overkill_edition/static/js/runtime-main.e5c7ea74.js.map",
+    "static/js/2.ac0c3636.chunk.js": "/todo_app_overkill_edition/static/js/2.ac0c3636.chunk.js",
+    "static/js/2.ac0c3636.chunk.js.map": "/todo_app_overkill_edition/static/js/2.ac0c3636.chunk.js.map",
+    "index.html": "/todo_app_overkill_edition/index.html",
+    "precache-manifest.489ca53d22b929ef7fef13323a918995.js": "/todo_app_overkill_edition/precache-manifest.489ca53d22b929ef7fef13323a918995.js",
+    "service-worker.js": "/todo_app_overkill_edition/service-worker.js",
+    "static/css/main.85800983.chunk.css.map": "/todo_app_overkill_edition/static/css/main.85800983.chunk.css.map",
+    "static/js/2.ac0c3636.chunk.js.LICENSE.txt": "/todo_app_overkill_edition/static/js/2.ac0c3636.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e5c7ea74.js",
+    "static/js/2.ac0c3636.chunk.js",
+    "static/css/main.85800983.chunk.css",
+    "static/js/main.e04e124c.chunk.js"
+  ]
+}
