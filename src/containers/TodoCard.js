@@ -12,19 +12,21 @@ class TodoCard extends Component {
     super(props);
     this.inputElement = React.createRef();
     this.state = {
-      todos: []
+      todos: { ...this.props.data }
     };
   }
 
   addTodo(e) {
     e.preventDefault();
     if (this.inputElement.current.value !== "") {
-      const fetchedData = this.props.data;
-      const currentTodos = fetchedData.text;
-      currentTodos.push(this.inputElement.current.value);
-      const updatedData = { ...fetchedData, text: currentTodos };
+      const currentData = this.state.todos;
+      const currentTodos = currentData.text;
+      currentTodos[
+        Object.keys(currentData.text).length
+      ] = this.inputElement.current.value;
+      const updatedData = { ...currentData, text: currentTodos };
       axios
-        .patch(`/todos/${updatedData.key}.json`, {
+        .patch(`todos/${updatedData.key}.json`, {
           title: updatedData.title,
           text: updatedData.text
         })
@@ -41,17 +43,24 @@ class TodoCard extends Component {
   }
 
   deleteTodo = (key, index) => {
+    console.log(index);
+
     axios
-      .delete("/todos/" + key + "/" + index + ".json")
+      .delete("todos/" + key + "/text/" + index + ".json")
       .then(res => {
-        const currentData = this.props.data;
-        const oldTodos = [...currentData.text];
-        const updatedTodos = oldTodos.filter(element, index) => {
-          return element !== index;
-        });
-        const updatedData = { ...currentData, updatedTodos };
-        console.log(updatedData);
-        this.setState({ todos: updatedData });
+        axios
+          .get("todos/" + key + ".json")
+          .then(ress => {
+            const currentData = this.state.todos;
+            const text = ress.data.text;
+            this.setState({
+              todos: { ...currentData, text: text }
+            });
+          })
+
+          .catch(err => {
+            console.log(err);
+          });
       })
       .catch(err => {
         console.log(err);
@@ -59,21 +68,37 @@ class TodoCard extends Component {
   };
 
   render() {
-    const todos =
-      this.props.data.text.length > 1 ? (
-        <div>
-          {this.props.data.text.slice(1).map((todo, index = 1) => {
-            return (
-              <Todo
-                text={todo}
-                delete={this.deleteTodo.bind(this, todo.index, index)}
-              ></Todo>
-            );
-          })}
-        </div>
-      ) : (
-        <p>You don't have any todos</p>
-      );
+    const key = this.state.todos.key;
+    const todos = Object.keys({ ...this.state.todos.text }).map(todo => {
+      if (todo !== "text0") {
+        return (
+          <div>
+            <Todo
+              text={this.state.todos.text[todo]}
+              delete={this.deleteTodo.bind(this, key, todo)}
+            ></Todo>
+          </div>
+        );
+      }
+    });
+
+    // this.state.todos.text.length > 1 ? (
+    //   <div>
+    //     {this.state.todos.text.slice(1).map(todo => {
+    //       if (todo !== null) {
+    //         return (
+    //           <Todo
+    //             text={todo.text}
+    //             delete={this.deleteTodo.bind(this, key, todo.counter)}
+    //             disabled={this.state.deleteReceived}
+    //           ></Todo>
+    //         );
+    //       }
+    //     })}
+    //   </div>
+    // ) : (
+    //   <p>You don't have any todos</p>
+    // );
 
     return (
       <Card style={{ width: "20%", display: "inline-block", margin: "30px" }}>

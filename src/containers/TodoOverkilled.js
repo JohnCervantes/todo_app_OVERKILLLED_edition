@@ -32,15 +32,15 @@ class App extends Component {
     if (this.inputElement.current.value !== "") {
       const newTodoBatch = {
         title: this.inputElement.current.value,
-        text: [""]
+        text: { text0: 0 }
       };
-      const currentData = [...this.state.todos];
+      const updatedData = [...this.state.todos];
 
       axios
         .post("/todos.json", newTodoBatch)
         .then(res => {
-          currentData.push({ ...newTodoBatch, key: res.data.name });
-          this.setState({ todos: currentData });
+          updatedData.push({ ...newTodoBatch, key: res.data.name });
+          this.setState({ todos: updatedData });
           this.inputElement.current.value = "";
           this.inputElement.current.focus();
         })
@@ -56,7 +56,10 @@ class App extends Component {
       .get("/todos.json")
       .then(res => {
         for (let key in res.data) {
-          fetchedData.push({ ...res.data[key], key: key });
+          fetchedData.push({
+            ...res.data[key],
+            key: key
+          });
         }
         this.setState({ todos: fetchedData, dataReceived: true });
       })
@@ -68,7 +71,7 @@ class App extends Component {
   render() {
     let todos = this.state.dataReceived ? (
       <div>
-        {this.state.todos.map((todo, index) => {
+        {this.state.todos.map(todo => {
           return (
             <TodoCard
               key={todo.key}
