@@ -5,6 +5,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Todo from "../components/Todo";
+import axios from "../axios-todos";
 
 class TodoCard extends Component {
   constructor(props) {
@@ -15,22 +16,64 @@ class TodoCard extends Component {
     };
   }
 
-  render() {
-    console.log(this.props.data.text);
+  addTodo(e) {
+    e.preventDefault();
+    if (this.inputElement.current.value !== "") {
+      const fetchedData = this.props.data;
+      const currentTodos = fetchedData.text;
+      currentTodos.push(this.inputElement.current.value);
+      const updatedData = { ...fetchedData, text: currentTodos };
+      axios
+        .patch(`/todos/${updatedData.key}.json`, {
+          title: updatedData.title,
+          text: updatedData.text
+        })
+        .then(res => {
+          this.setState({ todos: updatedData });
 
-    const todos = (
-      <div>
-        {this.props.data.text.map((todo, index) => {
-          return (
-            <Todo
-              key={todo.index}
-              text={todo}
-              // delete={this.deleteItem.bind(this, index)}
-            ></Todo>
-          );
-        })}
-      </div>
-    );
+          this.inputElement.current.value = "";
+          this.inputElement.current.focus();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }
+
+  deleteTodo = (key, index) => {
+    axios
+      .delete("/todos/" + key + "/" + index + ".json")
+      .then(res => {
+        const currentData = this.props.data;
+        const oldTodos = [...currentData.text];
+        const updatedTodos = oldTodos.filter(element, index) => {
+          return element !== index;
+        });
+        const updatedData = { ...currentData, updatedTodos };
+        console.log(updatedData);
+        this.setState({ todos: updatedData });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  render() {
+    const todos =
+      this.props.data.text.length > 1 ? (
+        <div>
+          {this.props.data.text.slice(1).map((todo, index = 1) => {
+            return (
+              <Todo
+                text={todo}
+                delete={this.deleteTodo.bind(this, todo.index, index)}
+              ></Todo>
+            );
+          })}
+        </div>
+      ) : (
+        <p>You don't have any todos</p>
+      );
 
     return (
       <Card style={{ width: "20%", display: "inline-block", margin: "30px" }}>
@@ -40,10 +83,20 @@ class TodoCard extends Component {
           </Typography>
           <Typography variant="h5" component="h2">
             <ul>{todos}</ul>
+            <form onSubmit={this.addTodo.bind(this)}>
+              <input
+                placeholder="Add todo here"
+                type="text"
+                ref={this.inputElement}
+              />
+              <button type="submit">Add</button>
+            </form>
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">Learn More</Button>
+          <Button onClick={this.props.delete} size="small">
+            Delete
+          </Button>
         </CardActions>
       </Card>
     );
@@ -51,30 +104,6 @@ class TodoCard extends Component {
 }
 
 export default TodoCard;
-
-// addItem(e) {
-//     e.preventDefault();
-//     if (this.inputElement.current.value !== "") {
-//       const fetchedData = [...this.state.todos];
-//       axios
-//         .post("/todo1.json", { text: this.inputElement.current.value })
-//         .then(res => {
-//           for (let key in res.data) {
-//             fetchedData.push({
-//               text: this.inputElement.current.value,
-//               key: key
-//             });
-//           }
-//           this.setState({ todos: fetchedData });
-
-//           this.inputElement.current.value = "";
-//           this.inputElement.current.focus();
-//         })
-//         .catch(err => {
-//           console.log(err);
-//         });
-//     }
-//   }
 
 //   componentDidMount() {
 //     const fetchedData = [];

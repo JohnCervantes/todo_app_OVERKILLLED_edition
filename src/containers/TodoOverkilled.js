@@ -12,27 +12,35 @@ class App extends Component {
     };
   }
 
-  deleteItem = index => {
-    const items = [...this.state.items];
-    items.splice(index, 1);
-    this.setState({ items: items });
+  deleteItem = key => {
+    axios
+      .delete("/todos/" + key + ".json")
+      .then(res => {
+        const oldTodos = [...this.state.todos];
+        const updatedTodos = oldTodos.filter(element => {
+          return element.key !== key;
+        });
+        this.setState({ todos: updatedTodos });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   addItem(e) {
     e.preventDefault();
     if (this.inputElement.current.value !== "") {
-      const fetchedData = [...this.state.todos];
-      axios
-        .post("/todos.json", { text: this.inputElement.current.value })
-        .then(res => {
-          for (let key in res.data) {
-            fetchedData.push({
-              text: this.inputElement.current.value,
-              key: key
-            });
-          }
-          this.setState({ todos: fetchedData });
+      const newTodoBatch = {
+        title: this.inputElement.current.value,
+        text: [""]
+      };
+      const currentData = [...this.state.todos];
 
+      axios
+        .post("/todos.json", newTodoBatch)
+        .then(res => {
+          currentData.push({ ...newTodoBatch, key: res.data.name });
+          this.setState({ todos: currentData });
           this.inputElement.current.value = "";
           this.inputElement.current.focus();
         })
@@ -65,7 +73,7 @@ class App extends Component {
             <TodoCard
               key={todo.key}
               data={todo}
-              delete={this.deleteItem.bind(this, index)}
+              delete={this.deleteItem.bind(this, todo.key)}
             ></TodoCard>
           );
         })}
