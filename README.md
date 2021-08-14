@@ -5,6 +5,7 @@
  ### <strong>Project is live: https://johncervantes.github.io/todo_app_overkill_edition/ </strong>
  
  ### <strong>Demo: https://www.youtube.com/watch?v=Xa_QRKk-pjo&feature=youtu.be</strong>
+ ---
  <br>
  <br>
  <br>
